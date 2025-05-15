@@ -1,0 +1,7 @@
+Flask
+qrcode
+pillow
+Werkzeug
+Flask_SQLAlchemy
+gunicorn
+

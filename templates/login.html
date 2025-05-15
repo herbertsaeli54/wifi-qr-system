@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WiFi QR Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2em;
+            background-color: #f0f2f5;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 1.5em;
+            border-radius: 8px;
+            max-width: 400px;
+            margin-bottom: 1em;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.6em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 0.6em 1.2em;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #qr-section {
+            margin-top: 2em;
+        }
+
+        #qr-image {
+            margin-top: 1em;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Login to Access Your WiFi QR Code</h1>
+
+    <form id="login-form">
+        <input type="email" id="email" placeholder="Enter your registered email" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="qr-section" style="display: none;">
+        <h2>Your QR Code</h2>
+        <img id="qr-image" src="" alt="QR Code">
+        <br>
+        <a id="download-link" href="#" download>Download QR Code</a>
+    </div>
+
+    <script>
+    const form = document.getElementById('login-form');
+    const qrSection = document.getElementById('qr-section');
+    const qrImage = document.getElementById('qr-image');
+    const downloadLink = document.getElementById('download-link');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const imageUrl = `/download_qr/${data.user_id}`;
+        qrImage.src = imageUrl;
+        downloadLink.href = imageUrl;
+          qrSection.style.display = 'block';
+
+          const expiryText = document.createElement('p');
+          expiryText.innerText = 'QR code expires at: ' + new Date(data.end_time).toLocaleString();
+          qrSection.appendChild(expiryText);
+
+      } else {
+        alert(data.message || 'Login failed.');
+      }
+    });
+    </script>
+
+</body>
+</html>
+

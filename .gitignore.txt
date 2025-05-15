@@ -1,0 +1,19 @@
+# Ignore Visual Studio files
+.vs/
+templates/.vs/
+*.vsidx
+
+# Ignore Python environment and cache
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore SQLite database and QR code images
+instance/
+qrcodes/
+
+# OS/System files
+.DS_Store
+Thumbs.db

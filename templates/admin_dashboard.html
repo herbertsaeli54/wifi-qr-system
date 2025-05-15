@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="margin-bottom: 20px;">
+        <h2>Summary</h2>
+        <p>Total Registered Users: {{ total_users }}</p>
+        <p>Active Sessions: {{ active_sessions }}</p>
+        <p>Expired Sessions: {{ expired_sessions }}</p>
+    </div>
+
+
+    <h1>Admin Dashboard</h1>
+    <h2>Registered Users</h2>
+
+    <form method="get" action="{{ url_for('admin_dashboard') }}">
+        <input type="text" name="search" placeholder="Search users..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered At</th>
+            <th>Session Start</th>
+            <th>Session End</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.registered_at }}</td>
+            <td>
+                {% if session_map.get(user.id) %}
+                {{ session_map[user.id].start_time }}
+                {% else %}
+                N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if session_map.get(user.id) %}
+                {{ session_map[user.id].end_time }}
+                {% else %}
+                N/A
+                {% endif %}
+            </td>
+
+            <td>
+
+                {% if session['user_id'] %}
+                {% set user = users | selectattr('id', 'equalto', session['user_id']) | first %}
+                {% if user and user.is_admin %}
+                <a href="/admin/dashboard">Admin Dashboard</a>
+                {% endif %}
+                {% endif %}
+
+            </td>
+
+            <td>
+                <form action="/admin/delete_user/{{ user.id }}" method="post" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+                <form action="/admin/regenerate_qr/{{ user.id }}" method="post" style="display:inline;">
+                    <button type="submit">Regenerate QR</button>
+                </form>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>User Registrations Over Time</h3>
+    <canvas id="userChart" width="400" height="200"></canvas>
+    <script>
+    const ctx = document.getElementById('userChart').getContext('2d');
+    const userChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|tojson }},
+            datasets: [{
+                label: 'New Users per Day',
+                data: {{ counts|tojson }},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>
+
