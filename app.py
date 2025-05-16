@@ -98,16 +98,7 @@ def download_qr(user_id):
     try:
         return send_file(qr_path, as_attachment=True)
     except FileNotFoundError:
-        return jsonify({'error': 'QR code not found for this user'}), 404
-
-
-@app.route('/register_page')
-def register_page():
-    return render_template('register.html')
-
-@app.route('/login_page', methods=['GET'])
-def login_page():
-    return render_template('login.html')
+        return jsonify({'error': 'QR code not found for this user'}), 40
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -248,6 +239,28 @@ def admin_list_users():
         })
 
     return jsonify({'users': user_data})
+
+@app.route('/')
+def index():
+    return redirect(url_for('register'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Handle form data
+        ...
+    return render_template('register.html')
+
+
+
+@app.route('/dashboard')
+def dashboard():
+    # Example dummy data – replace with your real query later
+    dates = ['2025-05-15', '2025-05-16', '2025-05-17']
+    counts = [4, 7, 2]
+
+    return render_template('admin_dashboard.html', dates=dates, counts=counts)
+
 
 
 
