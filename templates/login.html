@@ -48,7 +48,10 @@
             max-width: 300px;
         }
     </style>
+
 </head>
+      <a href="/register">New user? Register</a>
+
 <body>
 
     <h1>Login to Access Your WiFi QR Code</h1>
@@ -66,38 +69,38 @@
     </div>
 
     <script>
-    const form = document.getElementById('login-form');
-    const qrSection = document.getElementById('qr-section');
-    const qrImage = document.getElementById('qr-image');
-    const downloadLink = document.getElementById('download-link');
+        const form = document.getElementById('login-form');
+        const qrSection = document.getElementById('qr-section');
+        const qrImage = document.getElementById('qr-image');
+        const downloadLink = document.getElementById('download-link');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-      const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value.trim();
 
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
 
-      const data = await response.json();
+            const data = await response.json();
 
-      if (response.ok) {
-        const imageUrl = `/download_qr/${data.user_id}`;
-        qrImage.src = imageUrl;
-        downloadLink.href = imageUrl;
-          qrSection.style.display = 'block';
+            if (response.ok) {
+                const imageUrl = `/download_qr/${data.user_id}`;
+                qrImage.src = imageUrl;
+                downloadLink.href = imageUrl;
+                qrSection.style.display = 'block';
 
-          const expiryText = document.createElement('p');
-          expiryText.innerText = 'QR code expires at: ' + new Date(data.end_time).toLocaleString();
-          qrSection.appendChild(expiryText);
+                const expiryText = document.createElement('p');
+                expiryText.innerText = 'QR code expires at: ' + new Date(data.end_time).toLocaleString();
+                qrSection.appendChild(expiryText);
 
-      } else {
-        alert(data.message || 'Login failed.');
-      }
-    });
+            } else {
+                alert(data.message || 'Login failed.');
+            }
+        });
     </script>
 
 </body>
