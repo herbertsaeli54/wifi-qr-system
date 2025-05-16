@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 os.makedirs('qrcodes', exist_ok=True)
 os.makedirs('instance', exist_ok=True)
