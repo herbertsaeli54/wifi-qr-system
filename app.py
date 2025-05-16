@@ -5,6 +5,7 @@ os.makedirs('instance', exist_ok=True)
 
 from flask import Flask, request, jsonify
 from collections import defaultdict
+from flask import render_template
 from flask import Flask, render_template, request,jsonify, redirect, url_for
 from flask import render_template
 from flask import send_file
@@ -158,7 +159,7 @@ def login_required(f):
 
 @app.route('/')
 def home():
-    return "OH MY GOD Server is running!"
+    return render_template('register.html')  # Or whichever is your main HTML page
 
 @app.route('/active_sessions', methods=['GET'])
 def active_sessions():
